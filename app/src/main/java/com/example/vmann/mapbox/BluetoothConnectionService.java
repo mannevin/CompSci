@@ -21,35 +21,59 @@ import java.util.UUID;
 public class BluetoothConnectionService {
     private static final String TAG = "BluetoothConnectionServ";
 
+    //creates a string for appName called MYAPP
     private static final String appName = "MYAPP";
-
+    //universal unique identifier is established with the address
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
-
+    //creates variable for bluetooth adapter (mBluetoothAdapter) and for Context (mContext)
     private final BluetoothAdapter mBluetoothAdapter;
     Context mContext;
 
+    //creates AcceptThread variable (mInsecureAcceptThread)
     private AcceptThread mInsecureAcceptThread;
 
+    //create variables for ConnectThread (mConnectThread), BluetoothDevice(mmDevice),
+    // Universal Unique Identifier (deviceUUID), and ProgressDialog (mProgressDialog)
     private ConnectThread mConnectThread;
     private BluetoothDevice mmDevice;
     private UUID deviceUUID;
     ProgressDialog mProgressDialog;
-
+    //creates a connectedThread variable for after the device is connected
     private ConnectedThread mConnectedThread;
 
+    //get the default adapter for the android phone to connect to
     public BluetoothConnectionService(Context context) {
         mContext = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         start();
     }
 
+    /**
+     * Start the chat service. Specifically start AcceptThread to begin a
+     * session in listening (server) mode. Called by the Activity onResume()
+     */
+    public synchronized void start() {
+        Log.d(TAG, "start");
+
+        // Cancel any thread attempting to make a connection
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+        //do the same for the mInsecureAcceptThread variable
+        if (mInsecureAcceptThread == null) {
+            mInsecureAcceptThread = new AcceptThread();
+            mInsecureAcceptThread.start();
+        }
+    }
 
     /**
      * This thread runs while listening for incoming connections. It behaves
      * like a server-side client. It runs until a connection is accepted
      * (or until cancelled).
      */
+
     private class AcceptThread extends Thread {
 
         // The local server socket
@@ -122,7 +146,9 @@ public class BluetoothConnectionService {
         }
 
         public void run(){
+            //if the Bluetooth Socket is not connected
             BluetoothSocket tmp = null;
+            //create log message that the ConnectThread should be run
             Log.i(TAG, "RUN mConnectThread ");
 
             // Get a BluetoothSocket for a connection with the
@@ -169,26 +195,6 @@ public class BluetoothConnectionService {
             } catch (IOException e) {
                 Log.e(TAG, "cancel: close() of mmSocket in Connectthread failed. " + e.getMessage());
             }
-        }
-    }
-
-
-
-    /**
-     * Start the chat service. Specifically start AcceptThread to begin a
-     * session in listening (server) mode. Called by the Activity onResume()
-     */
-    public synchronized void start() {
-        Log.d(TAG, "start");
-
-        // Cancel any thread attempting to make a connection
-        if (mConnectThread != null) {
-            mConnectThread.cancel();
-            mConnectThread = null;
-        }
-        if (mInsecureAcceptThread == null) {
-            mInsecureAcceptThread = new AcceptThread();
-            mInsecureAcceptThread.start();
         }
     }
 
