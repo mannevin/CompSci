@@ -1,3 +1,6 @@
+//establish bluetooth connections
+#include <SoftwareSerial.h>
+SoftwareSerial BTserial(10, 11); //RX/TX
 //Front US Sensor
 const int OneTrigger = 6; // Trigger Pin of Ultrasonic Sensor Front
 const int OneEcho = 7; // Echo Pin of Ultrasonic Sensor Front
@@ -13,6 +16,7 @@ const int FourEcho = 13; // Echo Pin of Ultrasonic Sensor Back
 
 void setup() {
   Serial.begin(9600); // Starting Serial Terminal
+  BTserial.begin(9600); // Start the bluetooth serial terminal
 }
 
 void loop() {
@@ -71,7 +75,7 @@ void loop() {
 
   int directional; //initialize a variable for direction
   directional = checkdirection(cmFront, cmRight, cmLeft, cmBack); //call method to check empty side
-
+  blueTooth(directional);
 
 }
 
@@ -103,5 +107,17 @@ int checkdirection(long cmFront, long cmRight, long cmLeft, long cmBack) { //met
   }
   else {
     return 1; //returns 1 if front is empty
+  }
+}
+//write the number of direction towards the android device using bluetooth
+void blueTooth(int directional) {
+  //check if a bluetooth device is available
+  if (Serial.available() > 0) {
+    //send the direction to the android device
+    BTserial.write(directional);
+  }
+  //if bluetooth device is not available call the method to check again
+  else {
+    blueTooth(directional);
   }
 }
