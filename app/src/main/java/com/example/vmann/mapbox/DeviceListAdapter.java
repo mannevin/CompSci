@@ -11,7 +11,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
+public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice>
+{
 
 
     //Create a list layout and ArrayList to list all of the bluetooth devices within a proximity
@@ -19,7 +20,8 @@ public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
     private ArrayList<BluetoothDevice> mDevices;
     private int  mViewResourceId;
 
-    public DeviceListAdapter(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices){
+    public DeviceListAdapter(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices)
+    {
         //create layout inflater and the tvResourceId
         super(context, tvResourceId,devices);
         this.mDevices = devices;
@@ -28,7 +30,8 @@ public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
     }
 
     //method to get the view with all of the
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
         //switch the layout inflateer to a null value to empty the list
         convertView = mLayoutInflater.inflate(mViewResourceId, null);
 
@@ -36,15 +39,18 @@ public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
         BluetoothDevice device = mDevices.get(position);
 
         //find the bluetooth device by id
-        if (device != null) {
+        if (device != null)
+        {
             TextView deviceName = convertView.findViewById(R.id.tvDeviceName);
             TextView deviceAdress = convertView.findViewById(R.id.tvDeviceAddress);
             //find name of bluetooth device
-            if (deviceName != null) {
+            if (deviceName != null)
+            {
                 deviceName.setText(device.getName());
             }
             //get the address corresponding to the bluetooth device to establish connection
-            if (deviceAdress != null) {
+            if (deviceAdress != null)
+            {
                 deviceAdress.setText(device.getAddress());
             }
         }
